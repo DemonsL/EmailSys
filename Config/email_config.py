@@ -1,8 +1,7 @@
 
 mail_host_info = {
-    'mws_host': 'smtp.marketplace.amazon.com:465',
-    'qq_host': 'smtp.exmail.qq.com:465',
-    'gmail_host': 'smtp.gmail.com:587'
+    'qq_host': 'smtp.exmail.qq.com',
+    'gmail_host': 'smtp.gmail.com'
 }
 
 mail_user_info = {

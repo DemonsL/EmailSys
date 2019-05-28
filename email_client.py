@@ -6,7 +6,7 @@ from email.header import Header
 
 class EmailClient:
 
-    def __init__(self, host, port):
+    def __init__(self, host, port=465):
         self.host = host
         self.port = port
 
@@ -22,7 +22,7 @@ class EmailClient:
         try:
             smtp_obj.login(m_user, m_pass)
             smtp_obj.sendmail(m_user, m_rece, msg.as_string())
-            print('Send success!')
+            print('Send mail success!')
         except smtplib.SMTPException as e:
             print('SendEmailError: ', e)
         finally:
