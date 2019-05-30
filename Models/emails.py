@@ -16,7 +16,7 @@ class PubEmailTemplet(Base):
     __tablename__ = 'Pub_Email_Templet'
 
     ID = Column(Integer)
-    Asin = Column(String(20), primary_key=True)
+    Sku = Column(String(50), primary_key=True)
     EmailType = Column(String(50), primary_key=True)
     EmailTitle = Column(String(50))
     EmailBodyUrl = Column(String(200))
@@ -25,7 +25,7 @@ class PubEmailTemplet(Base):
     def data_to_dict(self):
         data_dict = {
             'id': self.ID,
-            'asin': self.Asin,
+            'sku': self.Sku,
             'email_type': self.EmailType,
             'email_title': self.EmailTitle,
             'email_body_url': self.EmailBodyUrl
@@ -44,8 +44,10 @@ class PubEmailPending(Base):
     AmazonOrderId = Column(String(20), primary_key=True)
     InboxMail = Column(String(200))
     InboxName = Column(String(100))
-    EmailTitle = Column(String(200))
     TempletId = Column(Integer, primary_key=True)
+    Carrier = Column(String(30))
+    TrackingNum = Column(String(50))
+    EstimatedArrivalDate = Column(DateTime)
     State = Column(Integer)
     ResendTimes = Column(Integer)
 
@@ -56,8 +58,10 @@ class PubEmailPending(Base):
             'order_id': self.AmazonOrderId,
             'inbox_mail': self.InboxMail,
             'inbox_name': self.InboxName,
-            'email_title': self.EmailTitle,
             'templet_id': self.TempletId,
+            'carrier': self.Carrier,
+            'tracking_num': self.TrackingNum,
+            'arrival_date': self.EstimatedArrivalDate,
             'state': self.State,
             'resend_times': self.ResendTimes
         }
