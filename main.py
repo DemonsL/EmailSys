@@ -4,6 +4,7 @@ import datetime
 from Config import email_config
 from Models import emails
 from email_client import EmailClient
+from sqlalchemy import and_
 
 
 class SendMail:
@@ -14,9 +15,12 @@ class SendMail:
         session.close()
         return resp
 
-    def get_email_pending(self, state):
+    def get_email_pending(self, date, time, stat):
         session = emails.DBSession()
-        resp = session.query(emails.PubEmailPending).filter_by(State=state).all()
+        resp = session.query(emails.PubEmailPending).filter(and_(and_(
+                                                     emails.PubEmailPending.SendDate == date),
+                                                     emails.PubEmailPending.SendHour == time),
+                                                     emails.PubEmailPending.State != stat).all()
         session.close()
         return resp
 
@@ -56,8 +60,6 @@ class SendMail:
 
     def start_send(self, pend):
         pen_id = pend.get('id')
-        send_date = pend.get('send_date')
-        send_hour = pend.get('send_hour')
         inbox_mail = pend.get('inbox_mail')
         inbox_name = pend.get('inbox_name')
         templet_id = pend.get('templet_id')
@@ -81,24 +83,25 @@ class SendMail:
             'arrival_date': datetime.datetime.strftime(arrival_date, '%Y-%m-%d')
         }
 
-        start_date = datetime.datetime.strftime(send_date, '%Y-%m-%d {}'.format(send_hour))
-        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d %H')
-        now_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific'))
-        now_us = datetime.datetime.strptime(now_us.strftime('%Y-%m-%d %H'), '%Y-%m-%d %H')
-        if now_us == start_date:
-            send_obj.send_mail(email_title, email_body_url, params)
-            send_obj.put_email_pending(pen_id, resend_times)
+        send_obj.send_mail(email_title, email_body_url, params)
+        send_obj.put_email_pending(pen_id, resend_times)
 
 
 
 if __name__ == '__main__':
 
-    send_obj = SendMail()
-    pending = send_obj.get_email_pending(0)
+    date_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific')).date()
+    time_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific')).time().hour
+    state = 1
 
-    for pend in pending:
-        pend = pend.data_to_dict()
-        send_obj.start_send(pend)
+    send_obj = SendMail()
+    pending = send_obj.get_email_pending(date_us, time_us, state)
+    if pending:
+        for pend in pending:
+            pend = pend.data_to_dict()
+            send_obj.start_send(pend)
+    else:
+        print('当前时间没有要发送的邮件！')
 
 
 
