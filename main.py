@@ -82,7 +82,7 @@ class SendMail:
             'tracking_number': tracking_num,
             'arrival_date': datetime.datetime.strftime(arrival_date, '%Y-%m-%d')
         }
-
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'EmailType: ', email_type)
         send_obj.send_mail(email_title, email_body_url, params)
         send_obj.put_email_pending(pen_id, resend_times)
 
@@ -99,9 +99,10 @@ if __name__ == '__main__':
     if pending:
         for pend in pending:
             pend = pend.data_to_dict()
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'US Date: ', date_us, ' ', time_us)
             send_obj.start_send(pend)
     else:
-        print('当前时间没有要发送的邮件！')
+        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '当前时间没有要发送的邮件！')
 
 
 
