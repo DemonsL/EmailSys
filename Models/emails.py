@@ -53,6 +53,7 @@ class PubEmailPending(Base):
 
     def data_to_dict(self):
         data_dict = {
+            'id': self.ID,
             'send_date': self.SendDate,
             'send_hour': self.SendHour,
             'order_id': self.AmazonOrderId,
