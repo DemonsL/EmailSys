@@ -15,12 +15,13 @@ class SendMail:
         session.close()
         return resp
 
-    def get_email_pending(self, date, time, stat):
+    def get_email_pending(self, date, time, stat, times):
         session = emails.DBSession()
-        resp = session.query(emails.PubEmailPending).filter(and_(and_(
+        resp = session.query(emails.PubEmailPending).filter(and_(and_(and_(
                                                      emails.PubEmailPending.SendDate == date),
                                                      emails.PubEmailPending.SendHour == time),
-                                                     emails.PubEmailPending.State != stat).all()
+                                                     emails.PubEmailPending.State != stat,
+                                                     emails.PubEmailPending.ResendTimes < times)).all()
         session.close()
         return resp
 
@@ -93,9 +94,10 @@ if __name__ == '__main__':
     date_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific')).date()
     time_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific')).time().hour
     state = 1
+    resend_times = 3
 
     send_obj = SendMail()
-    pending = send_obj.get_email_pending(date_us, time_us, state)
+    pending = send_obj.get_email_pending(date_us, time_us, state, resend_times)
     if pending:
         for pend in pending:
             pend = pend.data_to_dict()
