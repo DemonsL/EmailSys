@@ -84,8 +84,11 @@ class SendMail:
             'arrival_date': datetime.datetime.strftime(arrival_date, '%Y-%m-%d')
         }
         print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'EmailType: ', email_type)
-        send_obj.send_mail(email_title, email_body_url, params)
-        send_obj.put_email_pending(pen_id, resend_times)
+        try:
+            send_obj.send_mail(email_title, email_body_url, params)
+            send_obj.put_email_pending(pen_id, resend_times)
+        except Exception as e:
+            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'SendEmailError: ', e)
 
 
 
