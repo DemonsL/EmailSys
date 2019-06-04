@@ -1,11 +1,22 @@
 # coding: utf-8
 import pytz
+import logging
 import datetime
 from Config import email_config
 from Models import emails
 from email_client import EmailClient
 from sqlalchemy import and_
 
+formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
+file_name = '/home/develop/logs/email_logs/{}.log'.format(datetime.date.today())
+log = logging.getLogger()
+log.setLevel(logging.INFO)
+
+
+fh = logging.FileHandler(file_name, mode='w')
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(formatter)
+log.addHandler(fh)
 
 class SendMail:
 
@@ -83,12 +94,12 @@ class SendMail:
             'tracking_number': tracking_num,
             'arrival_date': datetime.datetime.strftime(arrival_date, '%Y-%m-%d')
         }
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'EmailType: ', email_type)
+        log.info('EmailType: %s', email_type)
         try:
             send_obj.send_mail(email_title, email_body_url, params)
             send_obj.put_email_pending(pen_id, resend_times)
         except Exception as e:
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'SendEmailError: ', e)
+            log.info('SendEmailError: %s', e)
 
 
 
@@ -104,10 +115,10 @@ if __name__ == '__main__':
     if pending:
         for pend in pending:
             pend = pend.data_to_dict()
-            print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'US Date: ', date_us, ' ', time_us)
+            log.info('US Date: %s', date_us, ' ', time_us)
             send_obj.start_send(pend)
     else:
-        print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '当前时间没有要发送的邮件！')
+        log.info('Now is nothing email to send!')
 
 
 
