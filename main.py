@@ -117,8 +117,6 @@ if __name__ == '__main__':
             pend = pend.data_to_dict()
             log.info('US Date: %s', str(date_us) + ' ' + str(time_us))
             send_obj.start_send(pend)
-    else:
-        log.info('Now is nothing email to send!')
 
 
 
