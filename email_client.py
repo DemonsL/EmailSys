@@ -1,9 +1,11 @@
 # coding: utf-8
+import logging
 import smtplib
 import datetime
 from email.mime.text import MIMEText
 from email.header import Header
 
+log = logging.getLogger()
 
 class EmailClient:
 
@@ -24,7 +26,9 @@ class EmailClient:
             smtp_obj.login(m_user, m_pass)
             smtp_obj.sendmail(m_user, m_rece, msg.as_string())
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Send mail success!')
+            log.info('Send mail success!')
         except smtplib.SMTPException as e:
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'SendEmailError: ', e)
+            log.info('SendEmailError: %s', e)
         finally:
             smtp_obj.quit()
