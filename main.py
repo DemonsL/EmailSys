@@ -13,7 +13,7 @@ log = logging.getLogger()
 log.setLevel(logging.INFO)
 
 
-fh = logging.FileHandler(file_name, mode='w')
+fh = logging.FileHandler(file_name, mode='a+')
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(formatter)
 log.addHandler(fh)
@@ -46,12 +46,17 @@ class SendMail:
 
 
     def send_mail(self, subject, url, params):
-        mail_host = email_config.mail_host_info.get('gmail_host')
-        mail_user_info = email_config.mail_user_info.get('mws_user')
-        mail_user = mail_user_info.split(',')[0]
-        mail_pass = mail_user_info.split(',')[1]
         mail_rece = params.get('buyer_email')
         mail_type = params.get('email_type')
+
+        user_type = 'mws_user'
+        if mail_type == 'AmzInvite':
+            user_type = 'mws_user_invite'
+        mail_user_info = email_config.mail_user_info.get(user_type)
+        mail_user = mail_user_info.split(',')[0]
+        mail_pass = mail_user_info.split(',')[1]
+        mail_host = email_config.mail_host_info.get('gmail_host')
+
 
         with open('Template' + url, 'r') as f:
             if mail_type == 'AmzShip':
