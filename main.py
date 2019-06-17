@@ -49,9 +49,12 @@ class SendMail:
         mail_rece = params.get('buyer_email')
         mail_type = params.get('email_type')
 
-        user_type = 'mws_user'
-        if mail_type == 'AmzInvite':
+        user_type = 'mws_user_ship'
+        if mail_type == 'AmzReceipt':
+            user_type = 'mws_user_receipt'
+        elif mail_type == 'AmzInvite':
             user_type = 'mws_user_invite'
+        log.info('UserType: %s', user_type)
         mail_user_info = email_config.mail_user_info.get(user_type)
         mail_user = mail_user_info.split(',')[0]
         mail_pass = mail_user_info.split(',')[1]
