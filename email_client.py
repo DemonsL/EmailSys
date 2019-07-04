@@ -17,6 +17,7 @@ class EmailClient:
         self.port = port
 
     def make_msg(self, m_from, m_to, m_subject, m_body, m_type='plain'):
+        m_to = ','.join(m_to) if isinstance(m_to, list) else m_to
         msg = MIMEText(m_body, m_type, 'utf-8')
         msg['From'] = Header(m_from, 'utf-8')
         msg['To'] = Header(m_to, 'utf-8')
