@@ -2,6 +2,7 @@
 import pytz
 import logging
 import datetime
+import random
 from Config import email_config
 from Models import emails
 from email_client import EmailClient
@@ -49,13 +50,13 @@ class SendMail:
         mail_rece = params.get('buyer_email')
         mail_type = params.get('email_type')
 
-        user_type = 'mws_user_ship'
-        if mail_type == 'AmzReceipt':
-            user_type = 'mws_user_receipt'
-        elif mail_type == 'AmzInvite':
-            user_type = 'mws_user_invite'
-        log.info('UserType: %s', user_type)
-        mail_user_info = email_config.mail_user_info.get(user_type)
+        # user_type = 'mws_user_ship'
+        # if mail_type == 'AmzReceipt':
+        #     user_type = 'mws_user_receipt'
+        # elif mail_type == 'AmzInvite':
+        #     user_type = 'mws_user_invite'
+        # log.info('UserType: %s', user_type)
+        mail_user_info = random.choice(email_config.mail_user_info.get('mws_users'))
         mail_user = mail_user_info.split(',')[0]
         mail_pass = mail_user_info.split(',')[1]
         mail_host = email_config.mail_host_info.get('gmail_host')
@@ -103,11 +104,16 @@ class SendMail:
             'arrival_date': datetime.datetime.strftime(arrival_date, '%Y-%m-%d')
         }
         log.info('EmailType: %s', email_type)
-        try:
-            send_obj.send_mail(email_title, email_body_url, params)
-            send_obj.put_email_pending(pen_id, resend_times)
-        except Exception as e:
-            log.info('SendEmailError: %s', e)
+
+        attemps, sucess = 0, False
+        while attemps < 3 and not sucess:
+            try:
+                send_obj.send_mail(email_title, email_body_url, params)
+                send_obj.put_email_pending(pen_id, resend_times)
+                sucess = True
+            except Exception as e:
+                attemps += 1
+                log.info('SendEmailError: %s', e)
 
 
 
