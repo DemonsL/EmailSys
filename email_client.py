@@ -4,7 +4,6 @@ import smtplib
 import poplib
 import datetime
 from email.mime.text import MIMEText
-from email.header import Header
 from email.parser import Parser
 from email.header import decode_header
 
@@ -19,16 +18,16 @@ class EmailClient:
     def make_msg(self, m_from, m_to, m_subject, m_body, m_type='plain'):
         m_to = ','.join(m_to) if isinstance(m_to, list) else m_to
         msg = MIMEText(m_body, m_type, 'utf-8')
-        msg['From'] = Header(m_from, 'utf-8')
-        msg['To'] = Header(m_to, 'utf-8')
-        msg['Subject'] = Header(m_subject, 'utf-8')
+        msg['From'] = m_from
+        msg['To'] = m_to
+        msg['Subject'] = m_subject
         return msg
 
-    def send(self, m_user, m_pass, m_rece, msg):
+    def send(self, m_user, m_pass, m_from, m_rece, msg):
         smtp_obj = smtplib.SMTP_SSL(host=self.host, port=self.port)
         try:
             smtp_obj.login(m_user, m_pass)
-            smtp_obj.sendmail(m_user, m_rece, msg.as_string())
+            smtp_obj.sendmail(m_from, m_rece, msg.as_string())
             print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'Send mail success!')
             log.info('Send mail success!')
         except smtplib.SMTPException as e:

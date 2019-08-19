@@ -57,9 +57,10 @@ class SendMail:
         #     user_type = 'mws_user_invite'
         # log.info('UserType: %s', user_type)
         mail_user_info = random.choice(email_config.mail_user_info.get('mws_users'))
-        mail_user = mail_user_info.split(',')[0]
-        mail_pass = mail_user_info.split(',')[1]
-        mail_host = email_config.mail_host_info.get('gmail_host')
+        mail_from = mail_user_info.split(',')[0]
+        mail_user = email_config.mail_user_info.get('aws_user').split(',')[0]
+        mail_pass = email_config.mail_user_info.get('aws_user').split(',')[1]
+        mail_host = email_config.mail_host_info.get('aws_host')
 
 
         with open('Template' + url, 'r') as f:
@@ -76,8 +77,8 @@ class SendMail:
                 )
 
         emc = EmailClient(mail_host)
-        msg = emc.make_msg(mail_user, mail_rece, subject, m_body, 'html')
-        emc.send(mail_user, mail_pass, mail_rece, msg)
+        msg = emc.make_msg(mail_from, mail_rece, subject, m_body, 'html')
+        emc.send(mail_user, mail_pass, mail_from, mail_rece, msg)
 
     def start_send(self, pend):
         pen_id = pend.get('id')
