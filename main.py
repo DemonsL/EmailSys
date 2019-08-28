@@ -3,9 +3,11 @@ import pytz
 import logging
 import datetime
 import random
+import json
 from Config import email_config
 from Models import emails
 from email_client import EmailClient
+from email_pop import EmailPop
 from sqlalchemy import and_
 
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
@@ -38,6 +40,11 @@ class SendMail:
                 session.delete(nosend_p)
             session.commit()
 
+    def add_nosend_email(self, nosend_email):
+        session = emails.DBSession()
+        nosend_model = emails.NoSentEmailAddress(nosend_email)
+        session.add(nosend_model)
+        session.commit()
 
     def get_template_by_id(self, temp_id):
         session = emails.DBSession()
@@ -135,6 +142,34 @@ class SendMail:
                 log.info('SendEmailError: %s', e)
 
 
+    def add_nosend_mail_to_sql(self):
+        m_host = email_config.mail_host_info.get('pop_server')
+        m_user = 'luomurong@yulong.com'
+        m_pass = 'YL50315yl'
+        exit_date = datetime.datetime.today().date() - datetime.timedelta(days=2)
+
+        ep = EmailPop(m_host)
+        rece_count, rece_msg = ep.receive(m_user, m_pass)
+
+        while rece_count > 0:
+            rece = ep.receive(m_user, m_pass, rece_count)
+            # 邮件超过两天时退出
+            email_date = ep.get_email_info(rece[1], 'Date')
+            email_date = datetime.datetime.strptime(email_date.split(',')[1].split('+')[0].strip(), '%d %b %Y %H:%M:%S') \
+                                          .strftime('%Y-%m-%d %H:%M:%S').split(' ')[0]
+            if email_date < str(exit_date):
+                return
+            # 保存通知邮件地址
+            email_subject = ep.get_email_info(rece[1], 'Subject')
+            if email_subject == 'AWS Notification Message':
+                email_bodys = json.loads(ep.get_email_body(rece[1]).split('--')[0].strip())
+                nosend_email = email_bodys.get('complaint').get('complainedRecipients')[0].get('emailAddress')
+                self.add_nosend_email(nosend_email)
+                log.info('Add email_address: %s to sql success!' % nosend_email)
+
+            rece_count -= 1
+
+
 
 if __name__ == '__main__':
 
@@ -146,15 +181,19 @@ if __name__ == '__main__':
     send_obj = SendMail()
     pending = send_obj.get_email_pending(date_us, time_us, state, resend_times)
     if pending:
-        log.info('Delete no send email from pending...')
+        log.info('Add no send email to sql.')
+        send_obj.add_nosend_mail_to_sql()
+        log.info('Delete no send email from pending.')
         nosend_list = send_obj.get_nosend_list()
         for nosend in nosend_list:
             send_obj.del_nosend_email_from_pend(nosend)
-        log.info('Delete no send email from pending...end!')
+
+        log.info('Send email starting...')
         for pend in pending:
             pend = pend.data_to_dict()
             log.info('US Date: %s', str(date_us) + ' ' + str(time_us))
             send_obj.start_send(pend)
+
 
 
 

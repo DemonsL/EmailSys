@@ -2,7 +2,8 @@
 mail_host_info = {
     'qq_host': 'smtp.exmail.qq.com',
     'gmail_host': 'smtp.gmail.com',
-    'aws_host': 'email-smtp.us-west-2.amazonaws.com'
+    'aws_host': 'email-smtp.us-west-2.amazonaws.com',
+    'pop_server': 'pop.exmail.qq.com'
 }
 
 mail_user_info = {
