@@ -21,6 +21,24 @@ log.addHandler(fh)
 
 class SendMail:
 
+    def get_nosend_list(self):
+        session = emails.DBSession()
+        resp = session.query(emails.NoSentEmailAddress).all()
+        session.close()
+        nosends = [r.model_to_data() for r in resp]
+        return nosends
+
+    def del_nosend_email_from_pend(self, nosend_email):
+        session = emails.DBSession()
+        nosend_pend = session.query(emails.PubEmailPending).filter(and_(emails.PubEmailPending.InboxMail == nosend_email,
+                                                                        emails.PubEmailPending.State == 0)).all()
+        if nosend_pend:
+            log.info('No send email: %s' % nosend_email)
+            for nosend_p in nosend_pend:
+                session.delete(nosend_p)
+            session.commit()
+
+
     def get_template_by_id(self, temp_id):
         session = emails.DBSession()
         resp = session.query(emails.PubEmailTemplet).filter_by(ID=temp_id).one()
@@ -128,6 +146,11 @@ if __name__ == '__main__':
     send_obj = SendMail()
     pending = send_obj.get_email_pending(date_us, time_us, state, resend_times)
     if pending:
+        log.info('Delete no send email from pending...')
+        nosend_list = send_obj.get_nosend_list()
+        for nosend in nosend_list:
+            send_obj.del_nosend_email_from_pend(nosend)
+        log.info('Delete no send email from pending...end!')
         for pend in pending:
             pend = pend.data_to_dict()
             log.info('US Date: %s', str(date_us) + ' ' + str(time_us))
