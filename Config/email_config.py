@@ -17,5 +17,5 @@ mail_user_info = {
                   'opinion@xcentz.com,G_9rotcetorpneercs',
                   'advisory@xcentz.com,O_6esacrehtael',
                   'QA@xcentz.com,D_6stesdaehhtooteulb',],
-    'aws_user': 'AKIARQM6KYLJKBTG3Q7A,BFGF68VTgmn2fah9iUeYk4ryaBKIgGvDF+PDIwSckXN7'
+    'aws_user': 'AKIAUKDSRLYK4SVKFBU7,BD9J6VPFBBJmgfIlCPN8BsGVXoMwi9WaFg34+hpI/4aj'
 }
