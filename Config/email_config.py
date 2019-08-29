@@ -16,8 +16,6 @@ mail_user_info = {
                   'Proposal@xcentz.com,M_1retpadalevartlasrevinudp',
                   'opinion@xcentz.com,G_9rotcetorpneercs',
                   'advisory@xcentz.com,O_6esacrehtael',
-                  'QA@xcentz.com,D_6stesdaehhtooteulb',
-                  'amazonadmin@xcentz.com,xcentz1q2w3e4r5t@',
-                  'amazonservice@xcentz.com,44remg94SSkj'],
+                  'QA@xcentz.com,D_6stesdaehhtooteulb',],
     'aws_user': 'AKIARQM6KYLJKBTG3Q7A,BFGF68VTgmn2fah9iUeYk4ryaBKIgGvDF+PDIwSckXN7'
 }

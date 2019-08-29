@@ -163,9 +163,17 @@ class SendMail:
             email_subject = ep.get_email_info(rece[1], 'Subject')
             if email_subject == 'AWS Notification Message':
                 email_bodys = json.loads(ep.get_email_body(rece[1]).split('--')[0].strip())
-                nosend_email = email_bodys.get('complaint').get('complainedRecipients')[0].get('emailAddress')
-                self.add_nosend_email(nosend_email)
-                log.info('Add email_address: %s to sql success!' % nosend_email)
+                nosend_type = email_bodys.get('notificationType')
+                nosend_email = ''
+                if nosend_type == 'Complaint':
+                    nosend_email = email_bodys.get('complaint').get('complainedRecipients')[0].get('emailAddress')
+                elif nosend_type == 'Bounce':
+                    nosend_email = email_bodys.get('bounce').get('bouncedRecipients')[0].get('emailAddress')
+                if nosend_email:
+                    ns_list = self.get_nosend_list()
+                    if nosend_email not in ns_list:
+                        self.add_nosend_email(nosend_email)
+                        log.info('Add email_address: %s to sql success!' % nosend_email)
 
             rece_count -= 1
 
