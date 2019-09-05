@@ -132,6 +132,10 @@ class SendMail:
         }
         log.info('EmailType: %s', email_type)
 
+        # email_title 为空的邮件不发
+        if not email_title:
+            return
+
         attemps, sucess = 0, False
         while attemps < 3 and not sucess:
             try:
