@@ -3,7 +3,7 @@ mail_host_info = {
     'qq_host': 'smtp.exmail.qq.com',
     'gmail_host': 'smtp.gmail.com',
     'aws_host': 'email-smtp.us-west-2.amazonaws.com',
-    'pop_server': 'pop.exmail.qq.com'
+    'pop_host': 'pop.exmail.qq.com'
 }
 
 mail_user_info = {
@@ -17,5 +17,7 @@ mail_user_info = {
                   'opinion@xcentz.com,G_9rotcetorpneercs',
                   'advisory@xcentz.com,O_6esacrehtael',
                   'QA@xcentz.com,D_6stesdaehhtooteulb',],
-    'aws_user': 'AKIAUKDSRLYK4SVKFBU7,BD9J6VPFBBJmgfIlCPN8BsGVXoMwi9WaFg34+hpI/4aj'
+    'aws_user': 'AKIARQM6KYLJKBTG3Q7A,BFGF68VTgmn2fah9iUeYk4ryaBKIgGvDF+PDIwSckXN7',
+    'pop_user': 'luomurong@yulong.com,YL50315yl'
+
 }

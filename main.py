@@ -8,7 +8,7 @@ from Config import email_config
 from Models import emails
 from email_client import EmailClient
 from email_pop import EmailPop
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 file_name = '/home/develop/logs/email_logs/{}.log'.format(datetime.date.today())
@@ -55,9 +55,10 @@ class SendMail:
     def get_email_pending(self, date, time, stat, times):
         session = emails.DBSession()
         resp = session.query(emails.PubEmailPending).filter(and_(and_(and_(
-                                                     emails.PubEmailPending.SendDate == date),
-                                                     emails.PubEmailPending.SendHour == time),
-                                                     emails.PubEmailPending.State != stat,
+                                                     emails.PubEmailPending.SendDate == date,
+                                                     or_(emails.PubEmailPending.SendHour == time,  # 1小时内发不完的邮件，下小时继续发送
+                                                         emails.PubEmailPending.SendHour + 1 == time)),
+                                                     emails.PubEmailPending.State != stat),
                                                      emails.PubEmailPending.ResendTimes < times)).all()
         session.close()
         return resp
@@ -143,9 +144,9 @@ class SendMail:
 
 
     def add_nosend_mail_to_sql(self):
-        m_host = email_config.mail_host_info.get('pop_server')
-        m_user = 'luomurong@yulong.com'
-        m_pass = 'YL50315yl'
+        m_host = email_config.mail_host_info.get('pop_host')
+        m_user = email_config.mail_user_info.get('pop_user').split(',')[0]
+        m_pass = email_config.mail_user_info.get('pop_user').split(',')[1]
         exit_date = datetime.datetime.today().date() - datetime.timedelta(days=2)
 
         ep = EmailPop(m_host)
