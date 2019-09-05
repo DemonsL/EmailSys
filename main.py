@@ -188,24 +188,24 @@ if __name__ == '__main__':
 
     date_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific')).date()
     time_us = datetime.datetime.now().astimezone(pytz.timezone('US/Pacific')).time().hour
-    state = 1
-    resend_times = 3
-
-    send_obj = SendMail()
-    pending = send_obj.get_email_pending(date_us, time_us, state, resend_times)
-    if pending:
-        log.info('Add no send email to sql.')
-        send_obj.add_nosend_mail_to_sql()
-        log.info('Delete no send email from pending.')
-        nosend_list = send_obj.get_nosend_list()
-        for nosend in nosend_list:
-            send_obj.del_nosend_email_from_pend(nosend)
-
-        log.info('Send email starting...')
-        for pend in pending:
-            pend = pend.data_to_dict()
-            log.info('US Date: %s', str(date_us) + ' ' + str(time_us))
-            send_obj.start_send(pend)
+    # state = 1
+    # resend_times = 3
+    #
+    # send_obj = SendMail()
+    # pending = send_obj.get_email_pending(date_us, time_us, state, resend_times)
+    # if pending:
+    #     log.info('Add no send email to sql.')
+    #     send_obj.add_nosend_mail_to_sql()
+    #     log.info('Delete no send email from pending.')
+    #     nosend_list = send_obj.get_nosend_list()
+    #     for nosend in nosend_list:
+    #         send_obj.del_nosend_email_from_pend(nosend)
+    # 
+    #     log.info('Send email starting...')
+    #     for pend in pending:
+    #         pend = pend.data_to_dict()
+    #         log.info('US Date: %s', str(date_us) + ' ' + str(time_us))
+    #         send_obj.start_send(pend)
 
 
 
