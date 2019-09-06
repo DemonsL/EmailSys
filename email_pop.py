@@ -3,6 +3,7 @@ import poplib
 from email.parser import Parser
 from email.header import decode_header
 
+poplib._MAXLINE = 20480
 
 class EmailPop:
 
